@@ -22,24 +22,21 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/api")
 public class AdminController {
 
     private final UserService userService;
-    private final RoleService roleService;
-
     @Autowired
-    public AdminController(UserService userService, RoleService roleService) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.roleService = roleService;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/api/users")
     public ResponseEntity<List<User>> getUsers() {
-        return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
-    }
+         return ResponseEntity.ok()
+                .body(userService.getUsers());
+   }
 
-    @PostMapping("/user")
+    @PostMapping("/api/user")
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid User user, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
@@ -51,11 +48,11 @@ public class AdminController {
             throw new UserNotCreatedException(errorMsg.toString());
         }
         userService.addUser(user);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
 
     }
 
-    @PutMapping("/user")
+    @PutMapping("/api/user")
     public ResponseEntity<HttpStatus> update(@RequestBody @Valid User user, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
@@ -66,29 +63,28 @@ public class AdminController {
             }
             throw new UserNotCreatedException(errorMsg.toString());
         }
-        System.out.println(user.toString());
-        System.out.println(user.getRoles());
+
         userService.changeUser(user);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
 
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/api/user/{id}")
     public ResponseEntity<User> getUser(@PathVariable("id") Long id) {
-        System.out.println(userService.getUserById(id).getRoles());
-        return new ResponseEntity<>( userService.getUserById(id), HttpStatus.OK);
+          return ResponseEntity.ok()
+                .body(userService.getUserById(id));
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/api/user/{id}")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
 
     @ExceptionHandler
     private ResponseEntity<UserErrorResponse> handleException(UserNotCreatedException e) {
         UserErrorResponse response = new UserErrorResponse(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(response);
     }
 }

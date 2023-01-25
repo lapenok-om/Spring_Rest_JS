@@ -30,7 +30,7 @@ formEdit.onsubmit = async (e) => {
 
     let array = [];
     let options = document.querySelector('#rolesEdit').options;
-    console.log('11111');
+
     for (let i = 0; i < options.length; i++) {
         if (options[i].selected) {
             array.push(roleList[i])
