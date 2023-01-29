@@ -2,7 +2,7 @@ function showUsers() {
 
     const infoUsers = document.getElementById("allUsers");
     let temp1 = "";
-    fetch("http://localhost:8080/api/users").then(res => res.json())
+    fetch("http://localhost:8080/api/user").then(res => res.json())
         .then(users => {
             users.map(user => {
                 let roles = [];
